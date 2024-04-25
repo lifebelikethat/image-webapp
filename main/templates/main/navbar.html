@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark block">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">ImageX</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'post-list' %}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'tag-list' %}">Tags</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'post-create' %}">Post</a>
+                </li>
+            </ul>
+            <form method="GET" action="{% url 'post-list' %}" class="d-flex">
+                <input class="form-control me-2" id="search_bar" type="search" value="{{ request.GET.tags }}" placeholder="Search" autocomplete="off" name="tags">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            &nbsp;
+            &nbsp;
+            {% if user.is_authenticated %}
+            <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+            <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<script>
+    const input = document.getElementById('search_bar');
+    let filteredArr = [];
+    tags_data = '{{ all_tags }}';
+    tags_data = JSON.parse(tags_data.replace(/&quot;/g, '"'));
+
+    input.addEventListener('keyup', (event)=> {
+        filteredArr = tags_data.filter(tag => tag.includes(event.target.value))
+        console.log(tags_data)
+        console.log(event.target.value)
+        $('#search_bar').autocomplete({
+            source: tags_data
+        })
+    })
+</script>

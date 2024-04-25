@@ -1,0 +1,5 @@
+{% include 'main/base.html' %}
+
+{% for tag in tags %}
+<a class="tag-link" href="{% url 'tag-update' id=tag.id %}">{{ tag.name }}</a>
+{% endfor %}

@@ -1,0 +1,115 @@
+{% include 'main/base.html' %}
+{% csrf_token %}
+
+<div class="post-detail">
+    <div>
+        <div class="post-info">
+            {% if user == post.author %}
+            <a href="{% url 'post-update' id=post.id %}">
+                <i class="fa-solid fa-pencil"></i>
+            </a>
+            <a href="{% url 'post-delete' id=post.id %}">
+                <i class="fa-solid fa-x"></i>
+            </a>
+            {% endif %}
+            <p>Id: {{ post.id }}</p>
+            <p>Title: {{ post.name }}</p>
+            <p>Description: {{ post.description|default_if_none:"" }}</p>
+            <p>Uploader: {{ post.author }}</p>
+            <p class="rating">
+            Rating:
+            {% if user.is_authenticated %}
+                {% if user_rating == 'L' %}
+                    <i class="arrow selected up" name="upvote"></i>
+                {% else %}
+                    <i class="arrow up" name="upvote"></i>
+                {% endif %}
+                <p class="rating" id="rating-count">{{ rating }}</p>
+                {% if user_rating == 'D' %}
+                    <i class="arrow selected down" name="downvote"></i>
+                {% else %}
+                    <i class="arrow down" name="downvote"></i>
+                {% endif %}
+            {% else %}
+            {{ rating }}
+            {% endif %}
+            </p>
+        </div>
+
+        <div class="post-tags">
+            <b>Tags</b>
+            <div class="post-tag">
+                {% for tag in tags %}
+                <a class="tag-link" href="{% url 'post-list' %}?tags={{ tag }}">
+                    {{ tag }}
+                </a>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <img src="/media/{{ post.image }}/">
+</div>
+
+<script>
+    let csrftoken = '{{ csrf_token }}'
+    let upvote = document.getElementsByName('upvote')[0];
+    let downvote = document.getElementsByName('downvote')[0];
+    let user_rating = '';
+    let rating_count = document.getElementById('rating-count').innerHTML;
+    let rating_count_num = Number(rating_count);
+    let data = {};
+
+    const postData =  function(data={}) {
+        fetch('', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(data),
+        }).then(response => {
+            console.log(response);
+        })
+    };
+
+    upvote.addEventListener('click', function() {
+        if (upvote.classList.contains('selected')) {
+            upvote.classList.remove('selected');
+            rating_count_num -= 1;
+            user_rating = '';
+            console.log(rating_count)
+        } else {
+            if (downvote.classList.contains('selected')) rating_count_num += 2;
+            else rating_count_num += 1;
+            upvote.classList.add('selected')
+            downvote.classList.remove('selected');
+            user_rating = 'L';
+        }
+        document.getElementById('rating-count').innerHTML = rating_count_num.toString();
+        data = {
+            'user_rating': user_rating,
+        }
+        postData(data);
+    });
+
+    downvote.addEventListener('click', function() {
+        if (downvote.classList.contains('selected')) {
+            downvote.classList.remove('selected');
+            rating_count_num += 1;
+            user_rating = '';
+        } else {
+            if (upvote.classList.contains('selected')) rating_count_num -= 2;
+            else rating_count_num -= 1;
+            downvote.classList.add('selected')
+            upvote.classList.remove('selected');
+            user_rating = 'D';
+        }
+        document.getElementById('rating-count').innerHTML = rating_count_num.toString();
+        data = {
+            'user_rating': user_rating,
+        }
+        postData(data)
+    });
+</script>

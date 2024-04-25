@@ -1,0 +1,11 @@
+{% include 'main/base.html' %}
+
+<div class="user-list container">
+
+    {% for user in users %}
+    <div class="user">
+        <a href="{% url 'user-detail' id=user.id %}">{{ user.username }}</a>
+    </div>
+    {% endfor %}
+
+</div>

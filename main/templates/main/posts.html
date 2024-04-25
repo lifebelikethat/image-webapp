@@ -1,0 +1,13 @@
+<div class="grid-container posts">
+        {% for post in posts %}
+        <a class="grid-item post" 
+            href="{% url 'post-detail' id=post.id%}{% if request.GET.tags %}?tags={{ request.GET.tags }}{% endif %}">
+            <img src="/media/{{ post.image }}/">
+            <b>
+                <p>
+                {{ post.name }}
+                </p>
+            </b>
+        </a>
+        {% endfor %}
+</div>

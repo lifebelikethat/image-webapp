@@ -1,0 +1,22 @@
+{% include 'main/base.html' %}
+
+<div class="user-info container">
+    <table>
+        {% for key, value in fields.items %}
+        <tr>
+            <td>{{ key|title }}</td>
+            <td>&nbsp; &nbsp; &nbsp;</td>
+            {% if key != 'uploads' %}
+            <td>{{ value }}</td>
+            {% else %}
+            <td><a href="{% url 'home-page' %}?user={{ user.username }}">{{ value }}</a></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div>
+    <b><a href="{% url 'home-page' %}?user={{ user.username }}">Posts</a></b>
+    {% include 'main/posts.html' %}
+</div>
